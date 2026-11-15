@@ -1,0 +1,91 @@
+{
+  "code": "Ontario Building Code (2024), Division B, Subsection 3.4.2 / 3.4.3",
+  "width_factors_mm_per_person": {
+    "doorways_corridors_passageways_ramps_1_in_8_or_less": 6.1,
+    "stairs_rise_max_180mm_run_min_280mm": 8.0,
+    "other_stairs_and_ramps_steeper_than_1_in_8": 9.2
+  },
+  "one_exit_not_sprinklered_table_3.4.2.1A": {
+    "A": {
+      "max_area_m2": 150,
+      "max_travel_m": 15
+    },
+    "B": {
+      "max_area_m2": 75,
+      "max_travel_m": 10
+    },
+    "C": {
+      "max_area_m2": 100,
+      "max_travel_m": 15
+    },
+    "D": {
+      "max_area_m2": 200,
+      "max_travel_m": 25
+    },
+    "E": {
+      "max_area_m2": 150,
+      "max_travel_m": 15
+    },
+    "F2": {
+      "max_area_m2": 150,
+      "max_travel_m": 10
+    },
+    "F3": {
+      "max_area_m2": 200,
+      "max_travel_m": 15
+    }
+  },
+  "one_exit_sprinklered_table_3.4.2.1B_max_area_m2": {
+    "A": 200,
+    "B": 100,
+    "C": 150,
+    "D": 300,
+    "E": 200,
+    "F2": 200,
+    "F3": 300
+  },
+  "one_exit_conditions": [
+    "building not more than 2 storeys in building height",
+    "occupant load served by the exit not more than 60 persons",
+    "sprinklered: travel distance not more than 25 m"
+  ],
+  "max_travel_distance_m_table_3.4.2.2": {
+    "A": [
+      30,
+      45
+    ],
+    "B": [
+      30,
+      45
+    ],
+    "C": [
+      40,
+      45
+    ],
+    "D": [
+      40,
+      45
+    ],
+    "E": [
+      30,
+      45
+    ],
+    "F1": [
+      25,
+      25
+    ],
+    "F2": [
+      30,
+      45
+    ],
+    "F3": [
+      30,
+      45
+    ]
+  },
+  "notes": [
+    "[unsprinklered, sprinklered] pairs in max_travel_distance_m.",
+    "Dead-end corridors are limited to 6 m in most occupancies.",
+    "Width factors apply to Group A, C, D, E and F floor areas (Sentence 3.4.3.2.(1)); care occupancies use different factors."
+  ]
+}
