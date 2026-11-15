@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ontario Exit Capacity Calculator | Dust 2 Engineering Inc.</title>
+<style>
+:root{color-scheme:dark}
+body{background:#0e1116;color:#e6e9ee;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;padding:24px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.55rem;line-height:1.25;margin:.2em 0 .1em}
+h2{font-size:1.15rem;margin-top:1.6em;color:#ffd479}
+.sub{color:#9fb0c3;margin:.2em 0 1.2em}
+.card{background:#161b22;border:1px solid #2b333f;border-radius:12px;padding:18px;margin:14px 0}
+label{display:block;margin:.7em 0 .25em;color:#c8d3e0;font-size:.95rem}
+input,select{width:100%;box-sizing:border-box;background:#0e1116;color:#e6e9ee;border:1px solid #39424f;border-radius:8px;padding:9px;font-size:1rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+button{background:#f0a832;color:#14100a;border:0;border-radius:8px;padding:11px 18px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:14px}
+button.ghost{background:#232a35;color:#e6e9ee}
+pre{background:#0a0d11;border:1px solid #2b333f;border-radius:10px;padding:14px;white-space:pre-wrap;word-break:break-word;font-size:.92rem}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border:1px solid #2b333f;padding:6px 8px;text-align:left}
+th{background:#1b212b}
+.small{color:#9fb0c3;font-size:.88rem}
+a{color:#7cc4ff}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Ontario Exit Capacity Calculator</h1>
+<p class="sub">Exit widths from occupant load, the one-exit test, and maximum travel distances — OBC Subsection 3.4.2 and 3.4.3.</p>
+<div class="card">
+<label>Occupant load of the floor area (persons)</label>
+<input id="occ" type="number" value="120" min="0">
+<label>Major occupancy group</label>
+<select id="grp"><option value="A">Group A</option><option value="B">Group B</option><option value="C">Group C</option><option value="D">Group D</option><option value="E">Group E</option><option value="F1">Group F1</option><option value="F2">Group F2</option><option value="F3">Group F3</option></select>
+<div class="row"><div><label>Floor area served (m&sup2;)</label><input id="area" type="number" value="450" min="0"></div>
+<div><label>Longest travel distance to an exit (m)</label><input id="trav" type="number" value="22" min="0"></div></div>
+<label><input id="spr" type="checkbox" style="width:auto"> Floor area is sprinklered throughout</label>
+<button onclick="go()">Check exits</button>
+</div>
+<h2>Result</h2>
+<pre id="out">Your exit check will appear here.</pre>
+<p class="small">Ontario Building Code 3.4.3.2 sets the aggregate width of exits from the occupant load:
+6.1 mm per person for doorways, corridors and passageways, 8 mm per person for stairs with a rise of not
+more than 180 mm and a run of not less than 280 mm, and 9.2 mm per person for other stairs. A single exit
+is only possible inside the small limits of Tables 3.4.2.1.A and 3.4.2.1.B, in a building of not more than
+2 storeys with an occupant load of not more than 60. Maximum travel distances are in Table 3.4.2.2.</p>
+<p class="small">Free tool by <b>Dust 2 Engineering Inc.</b>, Mississauga, Ontario — building permit
+drawings for restaurants and small commercial projects across the GTA, stamped by an Ontario P.Eng.
+Flat rate $3,500–$5,000. Questions or a project to discuss: open an issue in this repository.</p>
+</div>
+<script>
+
+const ONE_NS = {"A": [150, 15], "B": [75, 10], "C": [100, 15], "D": [200, 25], "E": [150, 15], "F2": [150, 10], "F3": [200, 15]};
+const ONE_S = {"A": 200, "B": 100, "C": 150, "D": 300, "E": 200, "F2": 200, "F3": 300};
+const TRAVEL = {"A": [30, 45], "B": [30, 45], "C": [40, 45], "D": [40, 45], "E": [30, 45], "F1": [25, 25], "F2": [30, 45], "F3": [30, 45]};
+function go(){
+  const occ = parseFloat(document.getElementById('occ').value) || 0;
+  const grp = document.getElementById('grp').value;
+  const area = parseFloat(document.getElementById('area').value) || 0;
+  const trav = parseFloat(document.getElementById('trav').value) || 0;
+  const spr = document.getElementById('spr').checked;
+  let out = 'Occupant load: ' + occ + ' persons, Group ' + grp + '\n';
+  out += 'Min. aggregate exit width, doorways/corridors: ' + Math.round(occ * 6.1) + ' mm\n';
+  out += 'Min. aggregate exit stair width (rise <= 180 mm, run >= 280 mm): ' + Math.round(occ * 8) + ' mm\n';
+  out += 'Min. aggregate width, other stairs / ramps steeper than 1 in 8: ' + Math.round(occ * 9.2) + ' mm\n';
+  const td = TRAVEL[grp];
+  if (td){ const lim = spr ? td[1] : td[0];
+    out += 'Max travel distance (Table 3.4.2.2): ' + lim + ' m' + (trav ? (' -> your ' + trav + ' m ' + (trav <= lim ? 'OK' : 'EXCEEDS the limit')) : '') + '\n'; }
+  if (spr){ const mx = ONE_S[grp];
+    if (mx !== undefined){ const ok = area <= mx && trav <= 25 && occ <= 60;
+      out += 'One exit, sprinklered (Table 3.4.2.1.B): max area ' + mx + ' m2, travel <= 25 m, load <= 60, building <= 2 storeys -> ' + (ok ? 'MAY BE PERMITTED - verify every condition in 3.4.2.1' : 'not permitted on these numbers'); }
+  } else { const r = ONE_NS[grp];
+    if (r){ const ok = area <= r[0] && trav <= r[1] && occ <= 60;
+      out += 'One exit, not sprinklered (Table 3.4.2.1.A): max area ' + r[0] + ' m2, max travel ' + r[1] + ' m, load <= 60, building <= 2 storeys -> ' + (ok ? 'MAY BE PERMITTED - verify every condition in 3.4.2.1' : 'not permitted on these numbers'); }
+    else out += 'One exit: Group F1 is not listed in Table 3.4.2.1.A - two exits required.'; }
+  out += '\nDead-end corridors: limited to 6 m in most occupancies. Preliminary only - verify against the OBC in force.';
+  document.getElementById('out').textContent = out;
+}
+
+</script>
+</body>
+</html>
